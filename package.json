@@ -1,0 +1,17 @@
+{
+  "name": "mongodb-workshop",
+  "version": "1.0.0",
+  "description": "**Instructor**: Tim Fogarty - Developer Advocate, mLab",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.15.5",
+    "mongoose": "^4.11.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
