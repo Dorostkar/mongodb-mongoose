@@ -1,10 +1,14 @@
 const express = require('express');
-var mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
 const app = express();
-const port = 3001;
-mongoose.connect('mongodb://localhost/school');
-const movieSchema = {
+
+const PORT = 3000;
+const CONNECTION_LOCATION = 'mongodb://localhost/school';
+
+mongoose.connect(CONNECTION_LOCATION, { useMongoClient: true });
+
+const episodeSchema = {
   id: Number,
   url: String,
   name: String,
@@ -14,50 +18,48 @@ const movieSchema = {
   airtime: String,
   airstamp: String,
   runtime: Number,
-  image: {
-    medium:String,
-    original:String
-  },
-  summery:String,
-  _link:{
-    self:{
-      href:String
-    }
-  }
+  image: Object,
+  summary: String,
+  _links: Object
+}
 
-};
+var Movies = mongoose.model('movies', episodeSchema);
 
-var Movie = mongoose.model('Movies', movieSchema);
-
+/*
+  Test route
+ */
 app.get('/', function(req, res) {
   res.send('This is working :)');
+})
 
-});
-//cerate 2 Root
-//1 return all got episode
-//2 return season by number
+/*
+  GET episodes
+ */
 app.get('/episodes', function(req, res) {
-
-  Movie.find(function(err, movies) {
-    if (err) {
-      return res.send('Error happend here');
+  const query = req.query;
+  Movies.find(query, function(err, episodes){
+    if(err){
+      return res.send('Error happened here');
     }
-    res.send(movies);
+    res.send(episodes);
   });
-});
-  app.get('/seasons/:id', function(req, res) {
+})
 
-   Movie.find({'season':req.params.id},function(err, result) {
-      if (err) {
-        // return res.send('Error happend here');
-        return handleError(err);
+/*
+  GET an episode
+ */
+app.get('/episodes/:episodeId', function(req, res) {
+  const episodeId = req.params.episodeId;
+  if(episodeId) {
+    Movies.findOne({id: episodeId}, function(err, episode){
+      if(err){
+        return res.send('Error happened here');
       }
-       res.send(result);
-
+      return res.send(episode);
     });
+  }
+})
 
-});
-
-app.listen(port, function() {
-  console.log('I am listening on ' + port);
-});
+app.listen(PORT, function(){
+  console.log('I am listening on '+PORT);
+})
